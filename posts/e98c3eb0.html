@@ -1,0 +1,2092 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+    
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="微服务 分布式系统中生成唯一ID, RRYF">
+    <meta name="baidu-site-verification" content="fmlEuI34ir" />
+    <meta name="google-site-verification" content="KeoTn_OFy4ndJwXNmm2gMeQfPhd7alqE9vQDwI32KCY" />
+    <meta name="google-site-verification" content="pBWoGvVEP36FzzS4xIpoMejc5UKi3RKcxd9rWWcjiDg" />
+    <meta name="360-site-verification" content="2db45fc772bbd3e7efd0985eec0fff97" />
+    <meta name="description" content="分布式系统中生成唯一ID使用redis生成id
+在分布式系统中，还可能使用流水号来追踪某一请求，以满足多个节点的协作。在这种情况下，并不需要插入数据，采用数据库机制就有点不合适了。为此，我们可以考虑使用Redis来满足这个要求。从性能上来说">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="baidu-site-verification" content="wvlc3L96QK" />
+    <title>微服务 分布式系统中生成唯一ID | RRYF</title>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/animate.css/3.5.1/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.11/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <style type="text/css">
+        
+            
+            code[class*="language-"],
+            pre[class*="language-"] {
+                white-space: pre !important;
+            }
+
+        
+    </style>
+
+    <script src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?46e79e71af0709a5b9106bf20cecc493";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+    
+    
+        <script>
+            (function(){
+                var bp = document.createElement('script');
+                var curProtocol = window.location.protocol.split(':')[0];
+                if (curProtocol === 'https') {
+                    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+                }
+                else {
+                    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+                }
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(bp, s);
+            })();
+        </script>
+    
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+
+    <body>
+
+        <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">RRYF</span>
+                </a>
+            </div>
+            
+
+
+<!-- <a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="/" class="waves-effect waves-light">
+            
+            <i class="fa fa-home"></i>
+            
+            <span>首页</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa fa-archive"></i>
+            
+            <span>归档</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="" class="waves-effect waves-light">
+            
+            <i class="fa fa-heartbeat"></i>
+            
+            <span>清单</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/about" class="waves-effect waves-light">
+            
+            <i class="fa fa-user-circle-o"></i>
+            
+            <span>关于我</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/contact" class="waves-effect waves-light">
+            
+            <i class="fa fa-envelope"></i>
+            
+            <span>留言板</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/tools" class="waves-effect waves-light">
+            
+            <i class="fa fa-suitcase"></i>
+            
+            <span>快捷导航</span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+</ul> -->
+
+<!-- 支持二级菜单特性  -->
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right nav-menu">
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/" class="waves-effect waves-light">
+              
+                <i class="fa fa-home"></i>
+              
+              <span>首页</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="" class="waves-effect waves-light">
+                
+                  <i class="fa fa-archive"></i>
+                
+                <span>归档</span>
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/archives" >
+                    
+                      <i class="fa fa-paper-plane" style="margin-top: -20px;"></i>
+                    
+                    <span>时轴</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/categories" >
+                    
+                      <i class="fa fa-bookmark" style="margin-top: -20px;"></i>
+                    
+                    <span>分类</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/tags" >
+                    
+                      <i class="fa fa-tags" style="margin-top: -20px;"></i>
+                    
+                    <span>标签</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+              <a href="" class="waves-effect waves-light">
+                
+                  <i class="fa fa-heartbeat"></i>
+                
+                <span>清单</span>
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+
+            <ul class="sub-nav menus_item_child ">
+              
+                <li> 
+                  <a href="/List/music" >
+                    
+                      <i class="fa fa-music" style="margin-top: -20px;"></i>
+                    
+                    <span>音乐</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/List/galleries" >
+                    
+                      <i class="fa fa-photo" style="margin-top: -20px;"></i>
+                    
+                    <span>相册</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/List/movies" >
+                    
+                      <i class="fa fa-film" style="margin-top: -20px;"></i>
+                    
+                    <span>视频</span>
+                  </a>
+                </li>
+              
+                <li> 
+                  <a href="/List" >
+                    
+                      <i class="fa fa-coffee" style="margin-top: -20px;"></i>
+                    
+                    <span>休闲</span>
+                  </a>
+                </li>
+               
+            </ul>
+          
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/about" class="waves-effect waves-light">
+              
+                <i class="fa fa-user-circle-o"></i>
+              
+              <span>关于我</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/contact" class="waves-effect waves-light">
+              
+                <i class="fa fa-envelope"></i>
+              
+              <span>留言板</span>
+            </a>
+
+            
+      </li>
+    
+      <li class="hide-on-med-and-down nav-item" >
+
+        
+            <a href="/tools" class="waves-effect waves-light">
+              
+                <i class="fa fa-suitcase"></i>
+              
+              <span>快捷导航</span>
+            </a>
+
+            
+      </li>
+    
+
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">RRYF</div>
+        <div class="logo-desc">
+            
+            java | Linux | hadoop
+            
+        </div>
+    </div>
+
+    
+<!-- 支持一级菜单特性 -->
+<!--    <ul class="menu-list mobile-menu-list">
+        
+        <li>
+            <a href="/" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-home"></i>
+                
+                首页
+            </a>
+        </li>
+        
+        <li>
+            <a href="" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-archive"></i>
+                
+                归档
+            </a>
+        </li>
+        
+        <li>
+            <a href="" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-heartbeat"></i>
+                
+                清单
+            </a>
+        </li>
+        
+        <li>
+            <a href="/about" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-user-circle-o"></i>
+                
+                关于我
+            </a>
+        </li>
+        
+        <li>
+            <a href="/contact" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-envelope"></i>
+                
+                留言板
+            </a>
+        </li>
+        
+        <li>
+            <a href="/tools" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-suitcase"></i>
+                
+                快捷导航
+            </a>
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/rryf/rryf.github.io" class="waves-effect waves-light" target="_blank">
+                <i class="fa fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul> -->
+
+   
+   
+<!-- 支持二级菜单特性  -->
+ <ul class="menu-list mobile-menu-list">
+    
+        <li class="m-nav-item">
+                
+                    <a href="/" class="waves-effect waves-light">
+                        
+                        <i class="fa fa-fw fa-home"></i>
+                        
+                        首页
+                    </a>
+              
+            </li>
+        
+        <li class="m-nav-item">
+                
+                    <a href="javascript:;">
+                            
+                            <i class="fa fa-fw fa-archive"></i>
+                            
+                            归档
+                            <span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+                    </a>
+                <ul>
+                  
+                    <li> 
+                      <a href="/archives" >
+                           
+                            <i class="fa fa-paper-plane" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>时轴</span>
+                      </a>
+                    </li>
+                  
+                    <li> 
+                      <a href="/categories" >
+                           
+                            <i class="fa fa-bookmark" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>分类</span>
+                      </a>
+                    </li>
+                  
+                    <li> 
+                      <a href="/tags" >
+                           
+                            <i class="fa fa-tags" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>标签</span>
+                      </a>
+                    </li>
+                   
+                </ul>
+              
+            </li>
+        
+        <li class="m-nav-item">
+                
+                    <a href="javascript:;">
+                            
+                            <i class="fa fa-fw fa-heartbeat"></i>
+                            
+                            清单
+                            <span class="m-icon"><i class="fa fa-chevron-right"></i></span>
+                    </a>
+                <ul>
+                  
+                    <li> 
+                      <a href="/List/music" >
+                           
+                            <i class="fa fa-music" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>音乐</span>
+                      </a>
+                    </li>
+                  
+                    <li> 
+                      <a href="/List/galleries" >
+                           
+                            <i class="fa fa-photo" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>相册</span>
+                      </a>
+                    </li>
+                  
+                    <li> 
+                      <a href="/List/movies" >
+                           
+                            <i class="fa fa-film" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>视频</span>
+                      </a>
+                    </li>
+                  
+                    <li> 
+                      <a href="/List" >
+                           
+                            <i class="fa fa-coffee" style="left: 18px; position: absolute;"></i>
+                       
+                       <span>休闲</span>
+                      </a>
+                    </li>
+                   
+                </ul>
+              
+            </li>
+        
+        <li class="m-nav-item">
+                
+                    <a href="/about" class="waves-effect waves-light">
+                        
+                        <i class="fa fa-fw fa-user-circle-o"></i>
+                        
+                        关于我
+                    </a>
+              
+            </li>
+        
+        <li class="m-nav-item">
+                
+                    <a href="/contact" class="waves-effect waves-light">
+                        
+                        <i class="fa fa-fw fa-envelope"></i>
+                        
+                        留言板
+                    </a>
+              
+            </li>
+        
+        <li class="m-nav-item">
+                
+                    <a href="/tools" class="waves-effect waves-light">
+                        
+                        <i class="fa fa-fw fa-suitcase"></i>
+                        
+                        快捷导航
+                    </a>
+              
+            </li>
+        
+
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/rryf/rryf.github.io" class="waves-effect waves-light" target="_blank">
+                <i class="fa fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul> 
+
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/rryf/rryf.github.io" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+        
+<script src="/libs/cryptojs/crypto-js.min.js"></script>
+<script>
+    (function() {
+        let pwd = '';
+        if (pwd && pwd.length > 0) {
+            if (pwd !== CryptoJS.SHA256(prompt('请输入访问本文章的密码')).toString(CryptoJS.enc.Hex)) {
+                alert('密码错误，将返回主页！');
+                location.href = '/';
+            }
+        }
+    })();
+</script>
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/04.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        微服务 分布式系统中生成唯一ID
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="https://cdn.bootcss.com/tocbot/4.8.1/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+        width: 345px;
+        background-color: rgb(255, 255, 255,0.7);
+        border-radius: 10px;
+        box-shadow: 0 10px 35px 2px rgba(0, 0, 0, .15), 0 5px 15px rgba(0, 0, 0, .07), 0 2px 5px -5px rgba(0, 0, 0, .1) !important;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        margin-bottom: 20px;
+    }
+    
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 20px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        
+<!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/java/" target="_blank">
+                                <span class="chip bg-color">java</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" target="_blank">
+                                <span class="chip bg-color">微服务</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%AF%87/" class="post-category" target="_blank">
+                                微服务篇
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-07-20
+                </div>
+
+                <div class="post-author info-break-policy">
+                    <i class="fa fa-user-o fa-fw"></i>作者:&nbsp;&nbsp;
+                    
+                        RRYF
+                    
+                </div>
+
+                
+                
+                
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv" ></span>
+    
+                
+
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h3 id="分布式系统中生成唯一ID"><a href="#分布式系统中生成唯一ID" class="headerlink" title="分布式系统中生成唯一ID"></a>分布式系统中生成唯一ID</h3><h4 id="使用redis生成id"><a href="#使用redis生成id" class="headerlink" title="使用redis生成id"></a>使用redis生成id</h4><blockquote>
+<p>在分布式系统中，还可能使用流水号来追踪某一请求，以满足多个节点的协作。在这种情况下，并不需要插入数据，采用数据库机制就有点不合适了。为此，我们可以考虑使用Redis来满足这个要求。从性能上来说，Redis的性能要比数据库好得多。从扩展性来说，使用多个Redis服务器就能实现扩展。因此，无论是性能，还是可扩展性，Redis都要比数据库好很多。并且Redis可以在不插入数据的时候生成ID，为分布式协作提供流水号。</p>
+</blockquote>
+<h5 id="1、Spring-boot实例代码如下："><a href="#1、Spring-boot实例代码如下：" class="headerlink" title="1、Spring boot实例代码如下："></a>1、Spring boot实例代码如下：</h5><pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;!-- 加入Spring Boot的Redis依赖 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;
+            &lt;groupId&gt;io.lettuce&lt;/groupId&gt;
+            &lt;artifactId&gt;lettuce-core&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;redis.clients&lt;/groupId&gt;
+    &lt;artifactId&gt;jedis&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>这样就能够引入Redis和Web相关的依赖包了。接着就需要在application.yml中配置对应的内容了。</p>
+<pre><code class="yml"># 配置启动端口
+server:
+  port: 1013
+
+# 配置Redis
+spring:
+  redis:
+    # 服务器
+    host: 192.168.224.131
+    # 密码
+    password: 123456
+    # jedis配置
+    jedis:
+      #连接池配置
+      pool:
+        # 最大活动线程数
+        max-active: 20
+        # 最大空闲线程数
+        max-idle: 10
+        # 最小空闲线程数
+        min-idle: 5
+        # 最大等待1 s
+        max-wait: 1s
+</code></pre>
+<p>这样就配置好了启动的端口和关于Redis的配置，然后我们在Redis服务器上执行以下脚本。</p>
+<pre><code class="shell">hset user_table_key offset 1    -- ID开始值
+hset user_table_key step 5      -- 步长
+hset user_table_key current 1   -- 当前值
+hset user_table_key start 0     -- 是否已经启用，0为不启用，1为启用
+hgetall user_table_key          -- 查看键（“user_table_key”）的所有信息
+</code></pre>
+<p>假设这里设置的是用户表ID的生成规则，这些规则使用Redis的哈希结构（Hash）进行保存。其中，开始值（offset）设置为1，步长（step）为5，这意味着下一个ID为1+5&#x3D;6。启动标志（start）设置为0，表示没有开启，开启后设置为1。有了这些规则数据，我们就可以采用下列代码来获取对应的ID了。</p>
+<pre><code class="java">package com.spring.cloud.chapter13.main;
+/**** imports ****/
+@SpringBootApplication
+@RestController // REST风格控制器
+@RequestMapping(&quot;/chapter13&quot;)
+public class Chapter13Application &#123;
+
+   public static void main(String[] args) &#123;
+      SpringApplication.run(Chapter13Application.class, args);
+   &#125;
+
+   private String lua =  // ①
+      // 获取是否启用标志
+      &quot; local start = redis.call(&#39;hget&#39;, KEYS[1], &#39;start&#39;) \n&quot;
+      // 如果未启用
+      + &quot; if tonumber(start) == 0  then \n&quot;
+      // 获取开始值
+      + &quot; local result = redis.call(&#39;hget&#39;, KEYS[1], &#39;offset&#39;) \n&quot;
+      // 将当前值设置为开始值
+      + &quot; redis.call(&#39;hset&#39;, KEYS[1], &#39;current&#39;, result) \n&quot;
+      // 将是否启用标志设置为已经启用（1）
+      + &quot; redis.call(&#39;hset&#39;, KEYS[1], &#39;start&#39;, &#39;1&#39;) \n&quot;
+      // 返回结束
+      + &quot; return result \n&quot;
+      // 结束if语句
+      + &quot; end \n&quot;
+      // 获取当前值
+      + &quot; local current = redis.call(&#39;hget&#39;, KEYS[1], &#39;current&#39;) \n&quot;
+      // 获取步长
+      + &quot; local step = redis.call(&#39;hget&#39;, KEYS[1], &#39;step&#39;) \n&quot;
+      // 结算新的当前值
+      + &quot; local result = current + step \n&quot;
+      // 设置新的当前值
+      + &quot; redis.call(&#39;hset&#39;, KEYS[1], &#39;current&#39;, result) \n&quot;
+      // 返回结果
+      + &quot; return result \n&quot;;
+
+   @Autowired
+   private StringRedisTemplate stringRedisTemplate = null;
+
+   /**
+    * 获取对应的ID
+    * @param keyType -- Redis的键
+    * @return ID
+    */
+   @GetMapping(&quot;/id/&#123;keyType&#125;&quot;)
+   public String getKey(@PathVariable(&quot;keyType&quot;) String keyType) &#123; // ②
+      // 结果返回为Long
+      DefaultRedisScript&lt;Long&gt; rs = new DefaultRedisScript&lt;Long&gt;();
+      rs.setScriptText(lua);
+      rs.setResultType(Long.class);
+      // 定义脚本中的key参数
+      List&lt;String&gt; keyList = new ArrayList&lt;&gt;();
+      keyList.add(keyType);
+      // 执行脚本，并传递参数
+      Object result =  stringRedisTemplate.execute(rs, keyList);
+      return result.toString();
+   &#125;
+&#125;
+</code></pre>
+<p>这段代码比较长，核心是代码①处的Lua脚本。在代码中，我做了详细的注释，请自行参考。代码②处的getKey方法是执行Lua脚本的。有了这段代码，启动模块chapter13，然后在浏览器中打开网址<a target="_blank" rel="noopener" href="http://localhost:1013/chapter13/id/user_table_key%EF%BC%8C%E5%B0%B1%E8%83%BD%E7%9C%8B%E5%88%B0%E8%BF%94%E5%9B%9E%E7%9A%84%E4%B8%80%E4%B8%AAID%E3%80%82%E8%BF%99%E9%87%8C%E5%9B%A0%E4%B8%BARedis%E6%89%A7%E8%A1%8CLua%E8%84%9A%E6%9C%AC%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E5%85%B7%E5%A4%87%E5%8E%9F%E5%AD%90%E6%80%A7%E7%9A%84%EF%BC%8C%E6%89%80%E4%BB%A5%E4%B8%8D%E4%BC%9A%E4%BA%A7%E7%94%9F%E9%87%8D%E5%8F%B7%E7%9A%84%E9%97%AE%E9%A2%98%E3%80%82%E5%9C%A8ID%E8%A7%84%E5%88%99%E4%B8%AD%E8%AE%BE%E7%BD%AE%E4%BA%86%E6%AD%A5%E9%95%BF%E4%B8%BA5%EF%BC%8C%E4%B9%9F%E5%B0%B1%E6%98%AF%E5%8F%AF%E4%BB%A5%E5%90%AF%E7%94%A85%E4%B8%AARedis%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%8A%82%E7%82%B9%E6%9D%A5%E7%94%9F%E6%88%90ID%EF%BC%8C%E8%BF%99%E8%B6%B3%E4%BB%A5%E6%BB%A1%E8%B6%B3%E4%B8%80%E8%88%AC%E5%BA%94%E7%94%A8%E6%80%A7%E8%83%BD%E7%9A%84%E9%9C%80%E8%A6%81%E4%BA%86%E3%80%82%E5%A6%82%E6%9E%9C%E6%9C%89%E5%BF%85%E8%A6%81%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%8A%8A%E6%AD%A5%E9%95%BF%E8%AE%BE%E7%BD%AE%E5%BE%97%E6%9B%B4%E5%A4%A7%E4%B8%80%E4%BA%9B%EF%BC%8C%E8%BF%99%E6%A0%B7%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E6%9B%B4%E5%A4%9A%E7%9A%84Redis%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%8A%82%E7%82%B9%E6%9D%A5%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD%E4%BA%86%E3%80%82">http://localhost:1013/chapter13/id/user_table_key，就能看到返回的一个ID。这里因为Redis执行Lua脚本的过程是具备原子性的，所以不会产生重号的问题。在ID规则中设置了步长为5，也就是可以启用5个Redis服务器节点来生成ID，这足以满足一般应用性能的需要了。如果有必要，可以把步长设置得更大一些，这样就可以使用更多的Redis服务器节点来提高性能了。</a></p>
+<p>使用Redis的方式，比数据库的方式快速。但是因为Redis服务可能出现故障，所以一般会考虑使用哨兵和集群等方式来降低故障的发生，从而保证系统能够持续提供服务。但是这样会依赖Redis服务，且算法也比较复杂，这会增加开发者实现的复杂度，造成性能的下降。</p>
+<h4 id="时钟算法"><a href="#时钟算法" class="headerlink" title="时钟算法"></a>时钟算法</h4><p>在时间表达上，Java的java.util.Date类使用了长整型数字进行表示，该数字代表距离格林尼治时间1970年1月1日整点的毫秒数。因此很多开发者提出利用这点，采用时钟算法来获取唯一的ID。使用时钟算法的好处有这么几点。</p>
+<ul>
+<li>相对简单，可以获取一个整数型，有利于数据库的性能。</li>
+<li>可以知道业务发生的时间点，通过时间来追踪业务。</li>
+<li>如果在原有时间信息的基础上加入数据存储机器编号，就能快速定位业务。</li>
+</ul>
+<p>在介绍时钟算法前，我们需要对Java中的时间有一定的认知，为此，这里先介绍一些简单的知识。在Java的System类中有下列两个静态（static）方法。</p>
+<pre><code class="java">// 返回当前时间，精确到毫秒
+System.currentTimeMillis();
+
+// 返回当前时间，精确到纳秒
+System.nanoTime();
+</code></pre>
+<p>这便是获取当前时间长整型数字的方法，此外还需要大家记住的下面的单位换算规则：</p>
+<p>1s&#x3D;1000ms</p>
+<p>1ms&#x3D;1000μs&#x3D;1000000ns</p>
+<p>从上述的单位换算来看，毫秒（ms）已经是一个很小的单位，纳秒（ns）则是一个更加小的时间单位，这就意味着，使用它则需要更多位数的长整型数字表示。而事实上，一些数据库能够允许的整数位是有限的。拿MySQL来说，BIGINT（大整数）类型支持的数字的大小范围是64位二进制，有符号的范围是−263 ～263−1；而INT类型（整数）支持的数字范围是32位二进制，有符号的范围是−231～231−1。一个纳秒时间的数值在BIGINT类型的范围之内，在INT类型的范围之外。因此当前纳秒时间的长整型数字完全可以作为一个主键，于是就可以在Chapter13Application中添加下列代码，用来生成主键。</p>
+<pre><code class="java">// 同步锁
+private static final Class&lt;Chapter13Application&gt; LOCK
+       = Chapter13Application.class;
+
+public static long timeKey() &#123;
+   // 线程同步锁，防止多线程错误
+   synchronized (LOCK) &#123; // ①
+      // 获取当前时间的纳秒值
+      long result = System.nanoTime();
+      // 死循环
+      while(true) &#123; 
+         long current =  System.nanoTime();
+         // 超过1 ns后才返回，这样便可保证当前时间肯定和返回的不同，
+         // 从而达到排重的效果
+         if (current - result &gt; 1) &#123; // ②
+            // 返回结果
+            return result;
+         &#125;
+      &#125;
+   &#125;
+&#125;
+</code></pre>
+<p>先看一下代码①处，这里启用了同步锁机制，保证在多线程中不会出现差错，并且在同步代码块中获取了当前时间的纳秒值。为防止调用产生同样的时间纳秒值，代码②处退出死循环，让程序循环到下一个纳秒才返回，这样就能够保证其返回ID的唯一性了。</p>
+<p>从上述代码可以看到，使用时钟算法相对来说比较简单。实际测试时，使用上列代码可以每秒产生数百万个ID，显然在性能上是十分优越的，甚至只需要使用单机就能够满足分布式系统发号的需求。但是如果在多个分布式节点上使用这样简易的时钟算法，就有可能发出重复的号，所以这种简单的时钟算法并不能应用在多个分布式节点上。另外，有些企业希望ID能够放入更多的业务逻辑，以便在后续出现问题时定位具体出现问题的机器和数据库，于是就出现了一些变种的时钟发号算法，其中最出名、使用最广泛的当属SnowFlake算法。</p>
+<h4 id="变异时钟算法——SnowFlake算法-推荐"><a href="#变异时钟算法——SnowFlake算法-推荐" class="headerlink" title="变异时钟算法——SnowFlake算法(推荐)"></a>变异时钟算法——SnowFlake算法(推荐)</h4><p> SnowFlake（雪花）算法是Twitter提出的一种算法，我们之前在阐述时钟算法的时候谈到过，如果MySQL的主键采用BIGINT（大整数）类型，那么它的取值范围是−263到263−1，从计算机原理的角度来说，存储一个BIGINT类型就需要64位二进制位。基于这个事实，SnowFlake算法对这64位二进制位做了下图所示的约定。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301016469.png"></p>
+<p>关于SnowFlake算法对于64位二进制的约定，这里结合上图做更为详细的阐述。</p>
+<ul>
+<li>第1位二进制值固定为0，没有业务含义，在计算机原理中，它是一个符号位，0代表正数，1代表负数，这里恒定为0。</li>
+<li>第2～42位，共41位二进制，为时间戳位，用于存入精确到毫秒数的时间。</li>
+<li>第43～52位，共10位二进制，为工作机器id位，其中工作机器又分为5位数据中心编号和5位受理机器编号，而5位二进制表达整数时取值区间为[0, 31]。</li>
+<li>第53～64位，共12位二进制，代表1ms内可以产生的序列号，当它表示整数时，取值区间为[0, 4095]</li>
+</ul>
+<p>第1位二进制值固定为0，没有业务含义，在计算机原理中，它是一个符号位，0代表正数，1代表负数，这里恒定为0。●第2～42位，共41位二进制，为时间戳位，用于存入精确到毫秒数的时间。●第43～52位，共10位二进制，为工作机器id位，其中工作机器又分为5位数据中心编号和5位受理机器编号，而5位二进制表达整数时取值区间为[0, 31]。●第53～64位，共12位二进制，代表1ms内可以产生的序列号，当它表示整数时，取值区间为[0, 4095]</p>
+<pre><code class="java">package com.spring.cloud.chapter13.main;
+
+public class SnowFlakeWorker &#123;
+   // 开始时间（这里使用2019年4月1日整点）
+   private final static long START_TIME = 1554048000000L;
+   // 数据中心编号所占位数 
+   private final static long DATA_CENTER_BITS = 10L;
+   // 最大数据中心编号
+   private final static long MAX_DATA_CENTER_ID = 1023;
+   // 序列编号占位位数
+   private final static long SEQUENCE_BIT = 12L;
+   // 数据中心编号向左移12位
+   private final static long DATA_CENTER_SHIFT = SEQUENCE_BIT ;
+   /** 时间戳向左移22位(10+12) */
+   private final static long TIMESTAMP_SHIFT 
+          = DATA_CENTER_BITS + DATA_CENTER_SHIFT;
+   // 最大生成序列号，这里为4095
+   private final static long MAX_SEQUENCE = 4095;
+   // 数据中心ID(0~1023)
+   private long dataCenterId;
+   // 毫秒内序列（0~4095）
+   private long sequence = 0L;
+   // 上次生成ID的时间戳 
+   private long lastTimestamp = -1L;
+
+   /**
+    * 因为当前微服务和分布式趋向于去中心化，所以不存在受理机器编号，
+    * 10位二进制全部用于数据中心
+    * @param dataCenterId -- 数据中心ID [0~1023]
+    */
+   public SnowFlakeWorker(long dataCenterId) &#123; // ①
+      // 验证数据中心编号的合法性
+      if (dataCenterId &gt; MAX_DATA_CENTER_ID) &#123;
+         String msg = &quot;数据中心编号[&quot; + dataCenterId 
+                +&quot;]超过最大允许值【&quot; + MAX_DATA_CENTER_ID + &quot;】&quot;;
+         throw new RuntimeException(msg);
+      &#125;
+      if (dataCenterId &lt; 0) &#123;
+         String msg = &quot;数据中心编号[&quot; + dataCenterId + &quot;]不允许小于0&quot;;
+         throw new RuntimeException(msg);
+      &#125;
+      this.dataCenterId = dataCenterId;
+   &#125;
+
+   /**
+    * 获得下一个ID (为了避免多线程环境产生的错误，这里方法是线程安全的)
+    * @return SnowflakeId
+    */
+   public synchronized long nextId() &#123;
+      // 获取当前时间
+      long timestamp = System.currentTimeMillis();
+      // 如果是同一个毫秒时间戳的处理
+      if (timestamp == lastTimestamp) &#123;
+        sequence += 1; // 序号+1
+        // 是否超过允许的最大序列
+        if (sequence &gt; MAX_SEQUENCE) &#123;
+           sequence = 0;
+           // 等待到下一毫秒
+           timestamp = tilNextMillis(timestamp); // ②
+        &#125;
+      &#125; else &#123;
+         // 修改时间戳
+         lastTimestamp = timestamp;
+         // 序号重新开始
+         sequence = 0;
+      &#125;
+      // 二进制的位运算，其中“&lt;&lt;”代表二进制左移，“|”代表或运算
+      long result = ((timestamp - START_TIME) &lt;&lt; TIMESTAMP_SHIFT)
+             | (this.dataCenterId &lt;&lt; DATA_CENTER_SHIFT)
+             | sequence; // ③
+      return result;
+   &#125;
+
+   /**
+    * 阻塞到下一毫秒，直到获得新的时间戳
+    * @param lastTimestamp -- 上次生成ID的时间戳
+    * @return 当前时间戳
+    */
+   protected long tilNextMillis(long lastTimestamp) &#123;
+      long timestamp;
+      do &#123;
+         timestamp = System.currentTimeMillis();
+      &#125; while(timestamp &gt; lastTimestamp);
+      return timestamp;
+   &#125;
+&#125;
+</code></pre>
+<p>这个算法的难点在于二进制的位运算。代码①处的构造方法，主要是验证和绑定数据中心编号（dataCenterId）。核心是nextId方法，它通过获取当前时间毫秒数，判断上次生成的ID是否在同一个时间戳内，于是，计算序号就存在两种可能。第一种可能是在同一个时间戳内，这个时候通过序号加一的方法来处理。而代码②处的序号已经超过最大限制，这时候通过tilNextMillis方法阻塞到下一毫秒，就可以获得下一毫秒的时间戳，避免产生重复的ID。第二种可能是不在同一个时间戳内，这个时候让序号从0重新开始，且重新记录上次生成ID的时间戳即可。接下来看代码③处，这里的运算为二进制位运算，其中，通过左移运算符“&lt;&lt;”将对应的二进制数字移动到对应的位上，然后通过“|”将数字拼凑在一起，最终生成ID。通过循环测试nextId方法可以看到生成的ID，代码如下：</p>
+<pre><code class="text">4151043847884800
+4151043847884801
+4151043847884802
+4151043847884803
+4151043847884804
+4151043847884805
+4151043847884806
+4151043847884807
+4151043847884808
+4151043847884809
+4151043847884810
+4151043847884811
+4151043847884812
+4151043847884813
+......
+</code></pre>
+<p>由以上ID可见，存在16位数字，按照给出的算法保证了ID的唯一性。SnowFlake算法是一种高效的算法，每秒可以产生数十万的ID，它包含了数据中心（旧算法在不去中心化的情况下还可以包含受理机器编号）、时间戳和序号3种业务逻辑，可以在一定的程度上帮助我们定位业务。由于性能好且带有一定的业务数据，因此受到了许多互联网企业的青睐，使用得也比较广泛。</p>
+<h4 id="自定义发号机制"><a href="#自定义发号机制" class="headerlink" title="自定义发号机制"></a>自定义发号机制</h4><p>在前面介绍SnowFlake算法的时候，我谈到了它的诸多缺点，例如，产生的序号和机器位可能浪费了太多的二进制。为了克服这些问题，我们会改造SnowFlake算法，编写自定义发号机制。</p>
+<p>在改造前，需要先明确自己的系统的实际情况，这是第一步。这里做如下假设:</p>
+<ul>
+<li>在改造前，需要先明确自己的系统的实际情况，这是第一步。这里做如下假设</li>
+<li>系统不会超过每秒10万次的请求（这符合大部分企业的需求），如果超过可以使用限流算法进行处理，所以序号使用8位二进制即可，这样原来的12位就能够节省出4位了</li>
+</ul>
+<p>由此来看，一共可以节省6位二进制，可以用于表示发号机器编号，这样就可以同时在多个节点上使用发号算法了。但是需要进行约定，为了更好地讲述约定，先看一下图</p>
+<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301016274.png"></p>
+<p>在上图中，约定如下。</p>
+<ul>
+<li>第1位二进制固定为0</li>
+<li>第2～42位，共41位二进制，存储时间戳</li>
+<li>第43～48位，共6位二进制，存储发号机器号</li>
+<li>第49～56位，共8位二进制，存储数据中心编号</li>
+<li>第57～64位，共8位二进制，存储序号</li>
+</ul>
+<p>有了这些约定，就可以实现算法了</p>
+<pre><code class="java">package com.spring.cloud.chapter13.main;
+
+public class CustomWorker &#123;
+   // 开始时间（这里使用2019年4月1日整点）
+   private final static long START_TIME = 1554048000000L;
+   // 当前发号节点编号（最大值63）
+   private static long MACHINE_ID = 21L;
+   // 最大数据中心编号
+   private final static long MAX_DATA_CENTER_ID = 127L;
+   // 最大序列号
+   private final static long MAX_SEQUENCE = 255L;
+   // 数据中心位数
+   private final static long DATA_CENTER_BIT=8L;
+   // 机器中心位数
+   private final static long MACHINE_BIT= 6L;
+   // 序列编号占位位数
+   private final static long SEQUENCE_BIT = 8L;
+   // 数据中心移位（8位）
+   private final static long DATA_CENTER_SHIFT = SEQUENCE_BIT;
+   // 当前发号节点移位（8+8=16位）
+   private final static long MACHINE_SHIFT 
+          = SEQUENCE_BIT + DATA_CENTER_BIT;
+   // 时间戳移位（8+8+6=22位）
+   private final static long TIMESTAMP_SHIFT 
+          = SEQUENCE_BIT + DATA_CENTER_BIT + MACHINE_BIT;
+
+   // 数据中心编号
+   private long dataCenterId;
+   // 序号
+   private long sequence = 0;
+   // 上次时间戳
+   private long lastTimestamp;
+
+
+   public CustomWorker(long dataCenterId) &#123; 
+      // 验证数据中心编号的合法性
+      if (dataCenterId &gt; MAX_DATA_CENTER_ID) &#123;
+         String msg = &quot;数据中心编号[&quot; + dataCenterId 
+                + &quot;]超过最大允许值【&quot; + MAX_DATA_CENTER_ID + &quot;】&quot;;
+         throw new RuntimeException(msg);
+      &#125;
+      if (dataCenterId &lt; 0) &#123;
+         String msg = &quot;数据中心编号[&quot; + dataCenterId + &quot;]不允许小于0&quot;;
+         throw new RuntimeException(msg);
+      &#125;
+      this.dataCenterId = dataCenterId;
+   &#125;
+
+   /**
+    * 获得下一个ID （该方法是线程安全的）
+    * @return 下一个ID
+    */
+   public synchronized long nextId() &#123;
+      // 获取当前时间
+      long timestamp = System.currentTimeMillis();
+      // 如果是同一个毫秒时间戳的处理
+      if (timestamp == lastTimestamp) &#123;
+         sequence += 1; // 序号+1
+         // 是否超过允许的最大序列
+         if (sequence &gt; MAX_SEQUENCE) &#123;
+            sequence = 0;
+            // 等待到下一毫秒
+            timestamp = tilNextMillis(timestamp);
+         &#125;
+      &#125; else &#123;
+         // 修改时间戳
+         lastTimestamp = timestamp;
+         // 序号重新开始
+         sequence = 0;
+      &#125;
+      // 二进制的位运算，其中“&lt;&lt;”代表二进制左移，“|”代表或运算
+      long result = ((timestamp-START_TIME) &lt;&lt; TIMESTAMP_SHIFT)
+            | (MACHINE_ID &lt;&lt; MACHINE_SHIFT)
+            | (this.dataCenterId &lt;&lt; DATA_CENTER_SHIFT)
+            | sequence;
+      return result;
+   &#125;
+
+   /**
+    * 阻塞到下一毫秒，直到获得新的时间戳
+    * @param lastTimestamp -- 上次生成ID的时间戳
+    * @return 当前时间戳
+    */
+   protected long tilNextMillis(long lastTimestamp) &#123;
+      long timestamp;
+      do &#123;
+         timestamp = System.currentTimeMillis();
+      &#125; while(timestamp &gt; lastTimestamp);
+      return timestamp;
+   &#125;
+&#125;
+</code></pre>
+<p>这个算法和SnowFlake算法大同小异，只是二进制位表达的含义略微有所不同。代码中，我已经给出了注释，请读者自行参考。这个自定义的算法也加入了发号节点编号，能够支持区间[0, 63]的64个数字的编号，这样该算法就能够支持最多64个发号节点的服务了</p>
+<p>通过自定义算法，我只是想告诉大家，发号机制没有固定不变的方法，只要合理即可。但是ID会受到数据存储的限制，例如，MySQL的BIGINT类型也只能支持−263到263−1的范围，这是需要注意的地方。如果需要MySQL支持更多的位数，可以使用DECIMAL类型，但DECIMAL是一种格式化的数字，如金额，其内部算法比较复杂，性能上不如BIGINT高，所以在大部分情况下，我都推荐使用BIGINT作为主键</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>前面我们讨论了几种常见的发号机制，并且讨论了它们的利弊。在现实中，可以根据自己的需要进行选型。此外，还有使用ZooKeeper分布式锁或者MongoDB的ObjectId机制来生成分布式ID的办法，只是它们比较复杂，并且性能不高，所以这里就不介绍了。实际上，我们也不需要受限于这些所谓的常见办法，因为我们也可以自定义发号算法。</p>
+<hr>
+<blockquote>
+<p>记录笔记并调整  &lt;&lt; Spring Cloud微服务和分布式系统实践 &gt;&gt;   作者： 杨开振 </p>
+</blockquote>
+
+            </div>
+            <hr/>
+
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+            
+            
+            
+            <div class="reprint1">
+                <p>
+                    <span class="reprint1-tip">
+                        <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载请注明:
+                    </span>
+                    <a href="http://www.rryf.top" class="b-link-green">RRYF</a>
+                    <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                    <a href="/posts/e98c3eb0.html" class="b-link-green">微服务 分布式系统中生成唯一ID</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+        <style>
+    .valine-card {
+        margin: 1.5rem auto;
+    }
+
+    .valine-card .card-content {
+        padding: 20px 20px 5px 20px;
+    }
+    /* valine 评论框增加背景图片 */
+    #vcomments textarea {
+        box-sizing: border-box;
+        background: url("http://www.luckyzmj.cn/medias/comment_bg.png") 100% 100% no-repeat;
+    }
+
+    #vcomments .vwrap {
+        box-sizing: border-box;
+        padding: 0 0 44px;
+        background-color: #F0FFF0;
+    }
+    #vcomments .vwrap .vheader{width: 80%;bottom:0;position: absolute;background: #F0FFF0;}
+
+    #vcomments .vinput{padding:10px 15px; text-align: center;}
+
+    #vcomments .vwrap .vheader .vinput{border-bottom:0px}
+
+    #vcomments .vwrap .vedit .vctrl{margin-top:-44px;right:0;position:absolute;margin-right:-3px;}
+
+    #vcomments  .vwrap .vrow{position:absolute;right:0;bottom:0;width:20%;padding-top:0px;}
+
+    #vcomments  .vrow {font-size: 0;padding: 0px 0;}
+
+    #vcomments  .vicon {margin-right: 15px;}
+
+    #vcomments  .vrow .vcol.vcol-30{display: none}
+
+    #vcomments  .vedit .vctrl span.vpreview-btn{display: none}
+
+    #vcomments  .vrow .vcol.vcol-70{width: 100%;}
+
+    #vcomments  .vsubmit.vbtn{border-radius: 0;padding: 0;color: #fff;line-height: 44px;width:100%;border: none;background:#00ecbc;}
+
+    #vcomments  .vcards .vcard .vh .vhead .vsys{background: #F0FFF0;}
+
+    #vcomments  .vcards .vcard .vh .vmeta .vat{font-size: 12px;display: block;margin-left: 15px;float: right;color: #fff;background-color: #00ecbc;line-height: 20px;padding: 0 6px;border-radius: 3px;}
+
+    @media screen and (max-width: 520px){
+    #vcomments  .vwrap .vheader .vinput{width: 33.33%;padding:10px 5px;}  
+    }
+
+    #vcomments input[type=text],
+
+    #vcomments input[type=email],
+
+    #vcomments input[type=url],
+
+    #vcomments textarea {
+        box-sizing: border-box;
+    }
+    #vcomments .vwrap p {
+        height: 20px;
+        width: 20px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+    #vcomments p {
+        margin: 2px 2px 10px;
+        font-size: 1.05rem;
+        line-height: 1.78rem;
+    }
+
+    #vcomments blockquote p {
+        text-indent: 0.2rem;
+    }
+
+    #vcomments a {
+        padding: 0 2px;
+        color: #42b983;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+
+    #vcomments img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #vcomments ol li {
+        list-style-type: decimal;
+    }
+
+    #vcomments ol,
+    ul {
+        display: block;
+        padding-left: 2em;
+        word-spacing: 0.05rem;
+    }
+
+    #vcomments ul li,
+    ol li {
+        display: list-item;
+        line-height: 1.8rem;
+        font-size: 1rem;
+    }
+
+    #vcomments ul li {
+        list-style-type: disc;
+    }
+
+    #vcomments ul ul li {
+        list-style-type: circle;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    #vcomments table, th, td {
+        border: 0;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments h1 {
+        font-size: 1.85rem;
+        font-weight: bold;
+        line-height: 2.2rem;
+    }
+
+    #vcomments h2 {
+        font-size: 1.65rem;
+        font-weight: bold;
+        line-height: 1.9rem;
+    }
+
+    #vcomments h3 {
+        font-size: 1.45rem;
+        font-weight: bold;
+        line-height: 1.7rem;
+    }
+
+    #vcomments h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    #vcomments h5 {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.4rem;
+    }
+
+    #vcomments h6 {
+        font-size: 1rem;
+        line-height: 1.3rem;
+    }
+
+    #vcomments p {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+
+    #vcomments hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid #ccc;
+    }
+
+    #vcomments blockquote {
+        margin: 15px 0;
+        border-left: 5px solid #42b983;
+        padding: 1rem 0.8rem 0.3rem 0.8rem;
+        color: #666;
+        background-color: rgba(66, 185, 131, .1);
+    }
+
+    #vcomments pre {
+        font-family: monospace, monospace;
+        padding: 1.2em;
+        margin: .5em 0;
+        background: #272822;
+        overflow: auto;
+        border-radius: 0.3em;
+        tab-size: 4;
+    }
+
+    #vcomments code {
+        font-family: monospace, monospace;
+        padding: 1px 3px;
+        font-size: 0.92rem;
+        color: #e96900;
+        background-color: #f8f8f8;
+        border-radius: 2px;
+    }
+
+    #vcomments pre code {
+        font-family: monospace, monospace;
+        padding: 0;
+        color: #e8eaf6;
+        background-color: #272822;
+    }
+
+    #vcomments pre[class*="language-"] {
+        padding: 1.2em;
+        margin: .5em 0;
+    }
+
+    #vcomments code[class*="language-"],
+    pre[class*="language-"] {
+        color: #e8eaf6;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    #vcomments b,
+    strong {
+        font-weight: bold;
+    }
+
+    #vcomments dfn {
+        font-style: italic;
+    }
+
+    #vcomments small {
+        font-size: 85%;
+    }
+
+    #vcomments cite {
+        font-style: normal;
+    }
+
+    #vcomments mark {
+        background-color: #fcf8e3;
+        padding: .2em;
+    }
+
+    #vcomments table, th, td {
+        padding: 12px 13px;
+        border: 1px solid #dfe2e5;
+    }
+
+    table tr:nth-child(2n), thead {
+        background-color: #fafafa;
+    }
+
+    #vcomments table th {
+        background-color: #f2f2f2;
+        min-width: 80px;
+    }
+
+    #vcomments table td {
+        min-width: 80px;
+    }
+
+    #vcomments [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: inherit;
+        margin-left: -1.3rem;
+        margin-right: 0.4rem;
+        margin-top: -1px;
+        vertical-align: middle;
+        left: unset;
+        visibility: visible;
+    }
+
+    /* 修复评论第一行位置错位 */
+    .v .vlist .vcard {
+    padding-top: 2.5em !important ;
+    }
+</style>
+
+<div class="card valine-card" data-aos="fade-up">
+    <div id="vcomments" class="card-content"></div>
+</div>
+
+<script src="/libs/valine/av-min.js"></script>
+<script src="/libs/valine/Valine.min.js"></script>
+
+<script>
+    new Valine({
+        el: '#vcomments',
+        admin_email: '16463223@qq.com',
+        appId: 'oCJTMBfpoKh12W9jiQEkI5VE-gzGzoHsz',
+        appKey: 'iRR5njwmY2Cmp9945L2dzJ4W',
+        path: window.location.pathname,
+        comment_count: true,
+        notify: 'false' === 'true',
+        verify: 'true' === 'true',
+        visitor: 'true' === 'true',
+        avatar: 'monsterid',
+        pageSize: '10',
+        lang: 'zh-cn',
+        placeholder: 'just go go',
+
+    });
+    $(document).ready(function(){
+        $("#vcomments").on('click', 'span.vat',function(){
+            $(this).parent('div.vmeta').next("div.vcontent").after($("div.vwrap"));
+            $('textarea#veditor').focus();
+        })
+    })
+</script>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script type="text/javascript">
+    jinrishici.load(function(result) {
+        var jrsc_plac =  result.data.content + "\n「" + result.data.origin.title + "」" + result.data.origin.dynasty + " · " + result.data.origin.author
+        document.getElementById("veditor").setAttribute("placeholder",jrsc_plac);
+    });
+</script>
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/posts/498cfd8e.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/12.jpg" class="responsive-img" alt="微信小程序UI库中的`iView Weapp`封装`TabBar`">
+                        
+                        <span class="card-title">微信小程序UI库中的`iView Weapp`封装`TabBar`</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            根据微信小程序UI库中的`iView Weapp`封装`TabBar`
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2022-08-01
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E7%AF%87/" class="post-category" target="_blank">
+                                    小程序篇
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" target="_blank">
+                        <span class="chip bg-color">微信小程序</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/posts/47cee480.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg" class="responsive-img" alt="微服务 分布式数据库">
+                        
+                        <span class="card-title">微服务 分布式数据库</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            分布式数据库应用介绍
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2022-07-20
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%AF%87/" class="post-category" target="_blank">
+                                    微服务篇
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/java/" target="_blank">
+                        <span class="chip bg-color">java</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" target="_blank">
+                        <span class="chip bg-color">微服务</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: RRYF<br />'
+            + '作者: RRYF<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fa fa-list"></i>
+    </a>
+</div>
+
+
+<script src="https://cdn.bootcss.com/tocbot/4.8.1/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3, h4, h5'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3, h4, h5').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+    
+
+</main>
+
+
+       
+        <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            
+            Copyright&copy; 2021 RRYF
+            <!-- 备案信息配置 
+	            Copyright&copy; 2021 RRYF | <a target="_blank" rel="noopener" href="http://www.beian.miit.gov.cn/">备案</a>
+	            <br>
+	            
+	             <a target="_blank" rel="noopener" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=备案号"><img src="http://www.rryf.top/medias/gaba.png" /> 备案号</a>
+	            
+	             <br>
+	             
+	            <span id="sitetime"></span><span class="my-face">ღゝ◡╹)ノ♡</span>
+	            <br>
+						-->
+            
+
+            
+                    
+                        <span id="busuanzi_container_site_pv" style='display:none'></span>
+                        总访问量: <span id="busuanzi_value_site_pv" class="white-color"></span>
+                    
+        
+                    
+                        <span id="busuanzi_container_site_uv" style='display:none'></span>
+                        人次&nbsp; | &nbsp;访客人数: <span id="busuanzi_value_site_uv" class="white-color"></span> 人
+                    
+    
+            
+					
+            
+            
+           
+            <br>
+
+        </div>
+
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/rryf" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-github"></i>
+    </a>
+
+
+ 
+    <a href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=1455770682@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+    <a href="http://wpa.qq.com/msgrd?v=3&uin=1455770682&site=qq&menu=yes" class="tooltipped" target="_blank" data-tooltip="访问我的QQ空间" data-position="top" data-delay="50">
+        <i class="fa fa-qq"></i>
+    </a>
+
+
+
+    <a href="https://weibo.com/3187848512" class="tooltipped" target="_blank" data-tooltip="关注我的微博" data-position="top" data-delay="50">
+        <i class="fa fa-weibo"></i>
+    </a>
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fa fa-rss"></i>
+    </a>
+</div>
+
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+
+        var t1 = Date.UTC(2019, 10, 25, 00, 00, 00); //北京时间2019-8-1 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes *
+            minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "本站已勉强运行 " + diffYears + " 年 " + diffDays + " 天 " + diffHours +
+            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒" ;
+    } /*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+
+
+
+
+
+        <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+        <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+        <script src="https://cdn.bootcss.com/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="https://cdn.bootcss.com/masonry/4.0.0/masonry.pkgd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+        <script src="https://cdn.bootcss.com/scrollprogress/3.0.2/scrollProgress.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.11/js/lightgallery-all.min.js"></script>
+        <script src="/js/matery.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+        
+            <script src="/libs/others/clicklove.js"></script>
+        
+
+        
+            <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+        
+
+        <script type="text/javascript">
+            var OriginTitile = document.title,
+                st;
+            document.addEventListener("visibilitychange", function () {
+                document.hidden ? (document.title = "看不见我🙈~看不见我🙈~", clearTimeout(st)) : (document.title =
+                    "(๑•̀ㅂ•́) ✧被发现了～", st = setTimeout(function () {
+                        document.title = OriginTitile
+                    }, 3e3))
+            })
+        </script>
+
+        <!-- 鼠标点击烟花爆炸效果 -->
+        
+
+        <!-- 背景雪花飘落特效 -->
+        
+
+        <!-- 鼠标点击文字特效 -->
+        
+            <script src="/js/wenzi.js" type="text/javascript"></script>
+        
+        
+
+        <!-- 背景雪花飘落特效 -->
+        
+            <script type="text/javascript">
+                var windowWidth = $(window).width();
+                if (windowWidth > 768) {
+                    document.write('<script type="text/javascript" src="/js/xuehuapiaoluo.js"><\/script>');
+                }
+            </script>
+        
+
+        <!-- 在线聊天工具  -->
+        
+
+        <!-- 背景 canvas-nest -->
+        
+
+        <!-- 背景静止彩带  -->
+        
+
+        <!-- 背景动态彩带 -->
+        
+
+        <!-- 天气接口控件   -->
+        
+            <script type="text/javascript">
+            WIDGET = {FID: 'zLkJSQpqsh'}
+            </script>
+        <!-- <script type="text/javascript" src="https://apip.weatherdt.com/float/static/js/r.js?v=1111"></script> -->
+
+        <script type="text/javascript">
+          var windowWidth = $(window).width();
+          if (windowWidth > 768) {
+              document.write('<script type="text/javascript" src="https://apip.weatherdt.com/float/static/js/r.js?v=1111"><\/script>');
+          }
+        </script>
+        
+        
+          <script>
+            (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/410f202e.js","daovoice")
+  daovoice('init', {
+      app_id: "XXXXX"
+    });
+  daovoice('update');
+  </script>
+        
+
+    <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/chitose.model.json"},"display":{"position":"left","width":150,"height":200},"mobile":{"show":false},"react":{"opacity":0.7}});</script></body>
+</html>
