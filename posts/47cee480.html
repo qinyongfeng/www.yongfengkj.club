@@ -21,7 +21,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="baidu-site-verification" content="wvlc3L96QK" />
     <title>微服务 分布式数据库 | RRYF</title>
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png">
+    <link rel="icon" type="image/png" href="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css">
@@ -85,7 +85,7 @@
             <div class="brand-logo">
                 <a href="/" class="waves-effect waves-light">
                     
-                    <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
+                    <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
                     
                     <span class="logo-span">RRYF</span>
                 </a>
@@ -323,7 +323,7 @@
 
     <div class="mobile-head bg-color">
         
-        <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
+        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
         
         <div class="logo-name">RRYF</div>
         <div class="logo-desc">
@@ -636,7 +636,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -816,13 +816,13 @@
             <div id="articleContent">
                 <h3 id="分布式数据库"><a href="#分布式数据库" class="headerlink" title="分布式数据库"></a>分布式数据库</h3><p>对分布式和微服务来说，一种业务就可能有很多的数据，如交易，单数据库也很有可能无法支撑，需要多个数据库节点进行支持，这种需要将数据库拆分为多节点进行存储的技术，便是本章需要讨论的分布式数据库技术。</p>
 <h4 id="数据库的分表、分库和分区的概念"><a href="#数据库的分表、分库和分区的概念" class="headerlink" title="数据库的分表、分库和分区的概念"></a>数据库的分表、分库和分区的概念</h4><p><code>分表</code>是指在一个或者多个数据库实例内，将一张表拆分为多张表存储，本文只讨论同一个数据库拆分，但多个数据库拆分实际也是大同小异的。一般来说，分表是因为该表需要存储很庞大的记录数，如果将其堆积到一起，就会导致数据量过于庞大（一般MySQL的表是5000万条记录左右）引发性能瓶颈。一般分表会按照某种算法进行拆分，如交易记录，可能按年份拆分，如下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301012257.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301012257.png"></p>
 <p>从上图中可以看到，将同一个数据库中的交易表按年份进行拆分，可以使交易记录不再只保存在一个表中，从而避免单表数据记录过多的问题。但是这样的分法也会导致一些问题，就是一张表不再存在全部完整的数据，进行总体查询的时候，需要分表查找，在做统计和分析时，需要跨表查询，这时需要引入路由算法和合并算法等才能得到所需的数据。</p>
 <p><code>分库</code>是指将一套数据库的设计结构，部署到多个数据库实例的节点中去，在应用的时候，按照一定的方法通过多个数据库实例节点访问数据。请注意，这里的数据库实例节点是一个逻辑概念，不是一个物理概念，什么意思呢？简单地说，一个机器节点可以部署多个数据库实例节点，也可以一个机器节点只部署一个数据库实例节点，所以机器节点不一定等于数据库节点。而机器节点是物理概念，是看得到的真实的机器；数据库节点是逻辑概念，是看不到的东西。为了更好地说明分库的概念，我们看下图。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301013911.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301013911.png"></p>
 <p>因为将数据库分为多个节点，所以需要一个路由算法来确定数据具体存放在哪个库中，于是路由算法就成了我们关注的核心内容之一。最简单的路由算法是求余算法。例如，现在划分为3个数据库，在获取用户ID（userId，假设是一个Long型数据）后，采用userId对3求余（userId%3），得到余数（可能为0或1或2），然后再根据余数存放到对应的库中。当然，这样也会有一定的缺点，为此有人提出了一致性哈希算法，这些我们会在后续进行讨论。</p>
 <p><code>分区</code>是指一张表的数据分成n个区块，在逻辑上看，最终只是一张表，但底层是由n个物理区块组成的，如下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301013767.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301013767.png"></p>
 <p>分区技术与分表技术很类似，只是分区技术属于数据库内部的技术，对于开发者来说，它逻辑上仍旧是一张表，开发时不需要改变SQL表名。将一张表切分为多个物理区块，有以下这么几个好处。</p>
 <ul>
 <li>相对于单个文件系统或是磁盘，分区可以在不同的磁盘上存储更多的数据</li>
@@ -849,7 +849,7 @@
 </code></pre>
 <p>在学习的过程中，在单机的情况下也可以创建3个数据库实例进行模拟，我也是如此，为此分别创建了3个库：sc_chapter14_1、sc_chapter14_2和sc_chapter14_3。</p>
 <p>然后我们给3个库进行编号，如下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301014048.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301014048.png"></p>
 <p>然后我们引入依赖包spring-boot-starter-jdbc，这样就能加载Spring关于JDBC的类库进来了。当中有一个抽象类AbstractRoutingDataSource，英文的翻译是抽象路由数据源。为了更好地使用它，我们进行一定的源码分析，如代码下午图所示。</p>
 <pre><code class="java">package org.springframework.jdbc.datasource.lookup;
 /**** imports ****/
@@ -1294,13 +1294,13 @@ public class UserIdFilter implements Filter &#123;
 <p>一般来说，基于数据的特性，企业会按用户数据进行区分，并且主要以用户编号为区分依据。这里有一个最基本的原则，就是尽量把同一个用户的数据存储到同一个分片中，因为这些数据往往有一定的关系，如果可以在同一个分片访问，就可以减少跨分片访问和由此带来的资源消耗，从而提高访问性能。拿我们的例子来说，如果根据交易记录ID进行分片，那么一个用户的交易记录就有可能同时有sc_chapter14_1、sc_chapter14_2和sc_chapter14_3这3个库中，如果想组织一个整体数据展示给用户看，就需要访问3个数据库，这无疑会给系统开发带来很大的困难，同时性能也不会好。对于那些与用户无关的数据，则需要根据其自身业务进行分析了。例如，产品微服务系统，可能就需要根据产品编号进行分片了，因为产品本身可能有许多关联业务，所以拿产品编号分片就显得更为合理一些。</p>
 <p>为了方便，下文就使用用户编号（userId）来讨论。在13章中我们谈到了SnowFlake算法的发号机制，这里假设我们采用这个算法来生成Long类型的userId，那么我们该如何使用userId来决定将数据存储到哪个分片呢？这便是分片算法要解决的问题。</p>
 <h4 id="哈希分片之求余算法"><a href="#哈希分片之求余算法" class="headerlink" title="哈希分片之求余算法"></a>哈希分片之求余算法</h4><p>常见的哈希算法有两种，一种是求余算法，另外一种是一致性哈希算法。相对来说，求余算法很简单，例如，在14.2节中我们就已经使用了，例子中有3个库，即sc_chapter14_1、sc_chapter14_2和sc_chapter14_3。我们只需要使用userId对3进行求余，就知道要存入哪个数据库了，这个算法十分简单易行，如下图代码所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301014389.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301014389.png"></p>
 <p>有些企业会采用这个模型，因为它简单方便，性能也很好。但是对于数据量快速增长的企业来说，采用这个模型就会有很多问题，其中最主要的就是伸缩性问题。例如，因为数据量不断膨胀，所以3个库已经不够用了，要增加1个库，从3个库变为4个库，就需要通过使用userId对4求余来决定将数据存放到哪个库。当然，这对新的用户数据没有什么影响，但是旧的用户数据就必须迁徙了。然而，所有数据库的数据都做迁徙，无疑需要大量的时间和代价，成本也较高。对于那些已经部署了数百个数据库的企业，当出现业务增长缓慢、出现资源浪费、需要为了节省成本而减少数据库的时候，也要迁徙所有的数据才能重新部署。所以这样的算法不适合那些频繁增加和减少节点的企业，为了满足业务伸缩性较大的企业的需求，有软件开发者提出了新的算法——著名的一致性哈希算法。</p>
 <h4 id="一致性哈希算法"><a href="#一致性哈希算法" class="headerlink" title="一致性哈希算法"></a>一致性哈希算法</h4><p>一致性哈希算法，也称为一致性哈希算法，它是1997年麻省理工学院提出的一种算法。它首先假设一个圆由232个点构成，如下图代码所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301015506.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301015506.png"></p>
 <p>对于这个圆，我们也称为哈希环，它由232个节点组成，数值的取值范围为区间[0, 232 −1]。我们可以根据数据库编号或者其他标识性的属性求其哈希值（hash code），然后该值就会对应到这个哈希环上的某一点。</p>
 <p>我们有4个库，依次编号为Node A、Node B、Node C和NodeD，它们都是我们数据库的节点。根据编号求出哈希值，就可以放到图14-5的节点中了，如下图代码所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301015082.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301015082.png"></p>
 <p>为了进行说明，这里需要进行一些假设。</p>
 <ul>
 <li>假设Node A、Node B、Node C和NodeD这4个节点的哈希值为Hash A、Hash B、Hash C和Hash D，根据图14-6就可以得到以下5个区间：[0, Hash A]、[Hash A,Hash B]、[Hash B, Hash C]、[Hash C, Hash D]和[Hash D, 232 −1)。</li>
@@ -1693,7 +1693,7 @@ public class UserIdFilter implements Filter &#123;
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/04.jpg" class="responsive-img" alt="微服务 分布式系统中生成唯一ID">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/04.jpg" class="responsive-img" alt="微服务 分布式系统中生成唯一ID">
                         
                         <span class="card-title">微服务 分布式系统中生成唯一ID</span>
                     </div>
@@ -1746,7 +1746,7 @@ public class UserIdFilter implements Filter &#123;
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/01.jpg" class="responsive-img" alt="MultipartFile 不上传文件报错问题">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/01.jpg" class="responsive-img" alt="MultipartFile 不上传文件报错问题">
                         
                         <span class="card-title">MultipartFile 不上传文件报错问题</span>
                     </div>

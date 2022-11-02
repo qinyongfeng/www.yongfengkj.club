@@ -21,7 +21,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="baidu-site-verification" content="wvlc3L96QK" />
     <title>微服务 分布式系统中生成唯一ID | RRYF</title>
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png">
+    <link rel="icon" type="image/png" href="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css">
@@ -85,7 +85,7 @@
             <div class="brand-logo">
                 <a href="/" class="waves-effect waves-light">
                     
-                    <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
+                    <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
                     
                     <span class="logo-span">RRYF</span>
                 </a>
@@ -323,7 +323,7 @@
 
     <div class="mobile-head bg-color">
         
-        <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
+        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
         
         <div class="logo-name">RRYF</div>
         <div class="logo-desc">
@@ -636,7 +636,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/04.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/04.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -979,7 +979,7 @@ public static long timeKey() &#123;
 <p>先看一下代码①处，这里启用了同步锁机制，保证在多线程中不会出现差错，并且在同步代码块中获取了当前时间的纳秒值。为防止调用产生同样的时间纳秒值，代码②处退出死循环，让程序循环到下一个纳秒才返回，这样就能够保证其返回ID的唯一性了。</p>
 <p>从上述代码可以看到，使用时钟算法相对来说比较简单。实际测试时，使用上列代码可以每秒产生数百万个ID，显然在性能上是十分优越的，甚至只需要使用单机就能够满足分布式系统发号的需求。但是如果在多个分布式节点上使用这样简易的时钟算法，就有可能发出重复的号，所以这种简单的时钟算法并不能应用在多个分布式节点上。另外，有些企业希望ID能够放入更多的业务逻辑，以便在后续出现问题时定位具体出现问题的机器和数据库，于是就出现了一些变种的时钟发号算法，其中最出名、使用最广泛的当属SnowFlake算法。</p>
 <h4 id="变异时钟算法——SnowFlake算法-推荐"><a href="#变异时钟算法——SnowFlake算法-推荐" class="headerlink" title="变异时钟算法——SnowFlake算法(推荐)"></a>变异时钟算法——SnowFlake算法(推荐)</h4><p> SnowFlake（雪花）算法是Twitter提出的一种算法，我们之前在阐述时钟算法的时候谈到过，如果MySQL的主键采用BIGINT（大整数）类型，那么它的取值范围是−263到263−1，从计算机原理的角度来说，存储一个BIGINT类型就需要64位二进制位。基于这个事实，SnowFlake算法对这64位二进制位做了下图所示的约定。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301016469.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301016469.png"></p>
 <p>关于SnowFlake算法对于64位二进制的约定，这里结合上图做更为详细的阐述。</p>
 <ul>
 <li>第1位二进制值固定为0，没有业务含义，在计算机原理中，它是一个符号位，0代表正数，1代表负数，这里恒定为0。</li>
@@ -1100,7 +1100,7 @@ public class SnowFlakeWorker &#123;
 <li>系统不会超过每秒10万次的请求（这符合大部分企业的需求），如果超过可以使用限流算法进行处理，所以序号使用8位二进制即可，这样原来的12位就能够节省出4位了</li>
 </ul>
 <p>由此来看，一共可以节省6位二进制，可以用于表示发号机器编号，这样就可以同时在多个节点上使用发号算法了。但是需要进行约定，为了更好地讲述约定，先看一下图</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/202209301016274.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/202209301016274.png"></p>
 <p>在上图中，约定如下。</p>
 <ul>
 <li>第1位二进制固定为0</li>
@@ -1595,7 +1595,7 @@ public class CustomWorker &#123;
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/12.jpg" class="responsive-img" alt="微信小程序UI库中的`iView Weapp`封装`TabBar`">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/12.jpg" class="responsive-img" alt="微信小程序UI库中的`iView Weapp`封装`TabBar`">
                         
                         <span class="card-title">微信小程序UI库中的`iView Weapp`封装`TabBar`</span>
                     </div>
@@ -1644,7 +1644,7 @@ public class CustomWorker &#123;
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg" class="responsive-img" alt="微服务 分布式数据库">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg" class="responsive-img" alt="微服务 分布式数据库">
                         
                         <span class="card-title">微服务 分布式数据库</span>
                     </div>

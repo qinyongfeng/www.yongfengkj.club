@@ -20,7 +20,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="baidu-site-verification" content="wvlc3L96QK" />
     <title>并发编程的艺术_2 | RRYF</title>
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png">
+    <link rel="icon" type="image/png" href="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css">
@@ -84,7 +84,7 @@
             <div class="brand-logo">
                 <a href="/" class="waves-effect waves-light">
                     
-                    <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
+                    <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
                     
                     <span class="logo-span">RRYF</span>
                 </a>
@@ -322,7 +322,7 @@
 
     <div class="mobile-head bg-color">
         
-        <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
+        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
         
         <div class="logo-name">RRYF</div>
         <div class="logo-desc">
@@ -635,7 +635,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/07.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/07.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -814,7 +814,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h5 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h5><p>Java代码在编译后会变成Java字节码，字节码被类加载器加载到JVM里，JVM执行字节码，最终需要转化为汇编指令在CPU上执行，Java中所使用的并发机制依赖于JVM的实现和CPU的指令。本章我们将深入底层一起探索下Java并发机制的底层实现原理。</p>
-<h5 id="2-1-volatile的应用"><a href="#2-1-volatile的应用" class="headerlink" title="2.1 volatile的应用"></a>2.1 volatile的应用</h5><p>在多线程并发编程中<code>synchronized</code>和<code>volatile</code>都扮演着重要的角色，volatile是轻量级的synchronized，它在多处理器开发中保证了共享变量的<code>“可见性”</code>。<code>可见性的意思是当一个线程修改一个共享变量时，另外一个线程能读到这个修改的值。如果volatile变量修饰符使用恰当的话，它比synchronized的使用和执行成本更低，因为它不会引起线程上下文的切换和调度。</code>本文将深入分析在硬件层面上Intel处理器是如何实现volatile的，通过深入分析帮助我们正确地使用volatile变量。<br><strong>1. volatile的定义与实现原理</strong><br>Java语言规范第3版中对volatile的定义如下：<code>Java编程语言允许线程访问共享变量，为了确保共享变量能被准确和一致地更新，线程应该确保通过排他锁单独获得这个变量</code>。Java语言提供了volatile，在某些情况下比锁要更加方便。如果一个字段被声明成volatile，Java线程内存模型确保所有线程看到这个变量的值是一致的。<br>在了解volatile实现原理之前，我们先来看下与其实现原理相关的CPU术语与说明。下图是CPU术语的定义。<br><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420142733.jpg" alt="CPU的术语定义"></p>
+<h5 id="2-1-volatile的应用"><a href="#2-1-volatile的应用" class="headerlink" title="2.1 volatile的应用"></a>2.1 volatile的应用</h5><p>在多线程并发编程中<code>synchronized</code>和<code>volatile</code>都扮演着重要的角色，volatile是轻量级的synchronized，它在多处理器开发中保证了共享变量的<code>“可见性”</code>。<code>可见性的意思是当一个线程修改一个共享变量时，另外一个线程能读到这个修改的值。如果volatile变量修饰符使用恰当的话，它比synchronized的使用和执行成本更低，因为它不会引起线程上下文的切换和调度。</code>本文将深入分析在硬件层面上Intel处理器是如何实现volatile的，通过深入分析帮助我们正确地使用volatile变量。<br><strong>1. volatile的定义与实现原理</strong><br>Java语言规范第3版中对volatile的定义如下：<code>Java编程语言允许线程访问共享变量，为了确保共享变量能被准确和一致地更新，线程应该确保通过排他锁单独获得这个变量</code>。Java语言提供了volatile，在某些情况下比锁要更加方便。如果一个字段被声明成volatile，Java线程内存模型确保所有线程看到这个变量的值是一致的。<br>在了解volatile实现原理之前，我们先来看下与其实现原理相关的CPU术语与说明。下图是CPU术语的定义。<br><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420142733.jpg" alt="CPU的术语定义"></p>
 <p>volatile是如何来保证可见性的呢？让我们在X86处理器下通过工具获取JIT编译器生成的汇编指令来查看对volatile进行写操作时，CPU会做什么事情。</p>
 <pre><code class="java">instance = new Singleton();     //instance是volatile变量
 </code></pre>
@@ -868,30 +868,30 @@ public class AtomicReference &lt;V&gt; implements java.io.Serializable &#123;
 <p>从JVM规范中可以看到Synchonized在JVM里的实现原理，JVM基于进入和退出Monitor对象来实现方法同步和代码块同步，但两者的实现细节不一样。代码块同步是使用monitorenter和monitorexit指令实现的，而方法同步是使用另外一种方式实现的，细节在JVM规范里并没有详细说明。但是，方法的同步同样可以使用这两个指令来实现。</p>
 <p>monitorenter指令是在编译后插入到同步代码块的开始位置，而monitorexit是插入到方法结束处和异常处，JVM要保证每个monitorenter必须有对应的monitorexit与之配对。任何对象都有一个monitor与之关联，当且一个monitor被持有后，它将处于锁定状态。线程执行到monitorenter指令时，将会尝试获取对象所对应的monitor的所有权，即尝试获得对象的锁。</p>
 <h5 id="2-2-1-Java对象头"><a href="#2-2-1-Java对象头" class="headerlink" title="2.2.1 Java对象头"></a>2.2.1 Java对象头</h5><p>synchronized用的锁是存在Java对象头里的。如果对象是数组类型，则虚拟机用3个字宽（Word）存储对象头，如果对象是非数组类型，则用2字宽存储对象头。在32位虚拟机中，1字宽等于4字节，即32bit，如表下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420144427.jpg" alt="Java对象头的长度"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420144427.jpg" alt="Java对象头的长度"></p>
 <p>Java对象头里的Mark Word里默认存储对象的HashCode、分代年龄和锁标记位。32位JVM的Mark Word的默认存储结构如下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420144523.jpg" alt=" Java对象头的存储结构"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420144523.jpg" alt=" Java对象头的存储结构"></p>
 <p>在运行期间，Mark Word里存储的数据会随着锁标志位的变化而变化。Mark Word可能变化为存储以下4种数据，如表下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420144657.png" alt="Mark Word的状态变化"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420144657.png" alt="Mark Word的状态变化"></p>
 <p>在64位虚拟机下，Mark Word是64bit大小的，其存储结构如下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420144739.png" alt="Mark Word的存储结构"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420144739.png" alt="Mark Word的存储结构"></p>
 <h5 id="2-2-2-锁的升级与对比"><a href="#2-2-2-锁的升级与对比" class="headerlink" title="2.2.2 锁的升级与对比"></a>2.2.2 锁的升级与对比</h5><p>Java SE 1.6为了减少获得锁和释放锁带来的性能消耗，引入了“偏向锁”和“轻量级锁”，在Java SE 1.6中，锁一共有4种状态，级别从低到高依次是：无锁状态、偏向锁状态、轻量级锁状态和重量级锁状态，这几个状态会随着竞争情况逐渐升级。锁可以升级但不能降级，意味着偏向锁升级成轻量级锁后不能降级成偏向锁。这种锁升级却不能降级的策略，目的是为了提高获得锁和释放锁的效率，下文会详细分析。</p>
 <p><strong><code>1.偏向锁</code></strong></p>
 <p>HotSpot[插图] 的作者经过研究发现，大多数情况下，锁不仅不存在多线程竞争，而且总是由同一线程多次获得，为了让线程获得锁的代价更低而引入了偏向锁。当一个线程访问同步块并获取锁时，会在对象头和栈帧中的锁记录里存储锁偏向的线程ID，以后该线程在进入和退出同步块时不需要进行CAS操作来加锁和解锁，只需简单地测试一下对象头的Mark Word里是否存储着指向当前线程的偏向锁。如果测试成功，表示线程已经获得了锁。如果测试失败，则需要再测试一下Mark Word中偏向锁的标识是否设置成1（表示当前是偏向锁）：如果没有设置，则使用CAS竞争锁；如果设置了，则尝试使用CAS将对象头的偏向锁指向当前线程。</p>
 <p><code>（1）偏向锁的撤销</code></p>
-<p>​		偏向锁使用了一种等到竞争出现才释放锁的机制，所以当其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销，需要等待全局安全点（在这个时间点上没有正在执行的字节码）。它会首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态；如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程。下图中的线程1演示了偏向锁初始化的流程，线程2演示了偏向锁撤销的流程。<br><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420144957.png" alt="偏向锁初始化的流程"><br><code>（2）关闭偏向锁</code><br>​		偏向锁在Java 6和Java 7里是默认启用的，但是它在应用程序启动几秒钟之后才激活，如有必要可以使用JVM参数来关闭延迟：-XX:BiasedLockingStartupDelay&#x3D;0。如果你确定应用程序里所有的锁通常情况下处于竞争状态，可以通过JVM参数关闭偏向锁：-XX:-UseBiasedLocking&#x3D;false，那么程序默认会进入轻量级锁状态。<br><strong><code>2.轻量级锁</code></strong><br><code>（1）轻量级锁加锁</code><br>​		线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间，并将对象头中的Mark Word复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用CAS将对象头中的Mark Word替换为指向锁记录的指针。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。</p>
-<p><code>（2）轻量级锁解锁</code><br>​		轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word替换回到对象头，如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。下图是两个线程同时争夺锁，导致锁膨胀的流程图。<br><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420145145.png" alt="争夺锁导致的锁膨胀流程图"></p>
+<p>​		偏向锁使用了一种等到竞争出现才释放锁的机制，所以当其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销，需要等待全局安全点（在这个时间点上没有正在执行的字节码）。它会首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态；如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程。下图中的线程1演示了偏向锁初始化的流程，线程2演示了偏向锁撤销的流程。<br><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420144957.png" alt="偏向锁初始化的流程"><br><code>（2）关闭偏向锁</code><br>​		偏向锁在Java 6和Java 7里是默认启用的，但是它在应用程序启动几秒钟之后才激活，如有必要可以使用JVM参数来关闭延迟：-XX:BiasedLockingStartupDelay&#x3D;0。如果你确定应用程序里所有的锁通常情况下处于竞争状态，可以通过JVM参数关闭偏向锁：-XX:-UseBiasedLocking&#x3D;false，那么程序默认会进入轻量级锁状态。<br><strong><code>2.轻量级锁</code></strong><br><code>（1）轻量级锁加锁</code><br>​		线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间，并将对象头中的Mark Word复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用CAS将对象头中的Mark Word替换为指向锁记录的指针。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。</p>
+<p><code>（2）轻量级锁解锁</code><br>​		轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word替换回到对象头，如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。下图是两个线程同时争夺锁，导致锁膨胀的流程图。<br><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420145145.png" alt="争夺锁导致的锁膨胀流程图"></p>
 <p>因为自旋会消耗CPU，为了避免无用的自旋（比如获得锁的线程被阻塞住了），一旦锁升级成重量级锁，就不会再恢复到轻量级锁状态。当锁处于这个状态下，其他线程试图获取锁时，都会被阻塞住，当持有锁的线程释放锁之后会唤醒这些线程，被唤醒的线程就会进行新一轮的夺锁之争。</p>
 <p><strong><code>3.锁的优缺点对比</code></strong></p>
 <p>下图是锁的优缺点的对比。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420145502.png" alt=" 锁的优缺点的对比"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420145502.png" alt=" 锁的优缺点的对比"></p>
 <h5 id="2-3-原子操作的实现原理"><a href="#2-3-原子操作的实现原理" class="headerlink" title="2.3 原子操作的实现原理"></a>2.3 原子操作的实现原理</h5><p>原子（atomic）本意是“不能被进一步分割的最小粒子”，而原子操作（atomicoperation）意为“不可被中断的一个或一系列操作”。在多处理器上实现原子操作就变得有点复杂。让我们一起来聊一聊在Intel处理器和Java里是如何实现原子操作的。</p>
 <p><strong><code>1.术语定义</code></strong></p>
 <p>在了解原子操作的实现原理前，先要了解一下相关的术语，如下图所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420145746.png" alt="CPU术语定义"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420145746.png" alt="CPU术语定义"></p>
 <p><strong>2.处理器如何实现原子操作</strong></p>
 <p>32位IA-32处理器使用基于对缓存加锁或总线加锁的方式来实现多处理器之间的原子操作。首先处理器会自动保证基本的内存操作的原子性。处理器保证从系统内存中读取或者写入一个字节是原子的，意思是当一个处理器读取一个字节时，其他处理器不能访问这个字节的内存地址。Pentium 6和最新的处理器能自动保证单处理器对同一个缓存行里进行16&#x2F;32&#x2F;64位的操作是原子的，但是复杂的内存操作处理器是不能自动保证其原子性的，比如跨总线宽度、跨多个缓存行和跨页表的访问。但是，处理器提供总线锁定和缓存锁定两个机制来保证复杂内存操作的原子性。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420145830.png" alt="结果对比"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420145830.png" alt="结果对比"></p>
 <p><code>（1）使用总线锁保证原子性</code></p>
 <p>​	<strong>第一个机制是通过总线锁保证原子性</strong>。如果多个处理器同时对共享变量进行读改写操作（i++就是经典的读改写操作），那么共享变量就会被多个处理器同时进行操作，这样读改写操作就不是原子的，操作完之后共享变量的值会和期望的不一致。举个例子，如果i&#x3D;1，我们进行两次i++操作，我们期望的结果是3，但是有可能结果是2，如上图所示。</p>
 <p>原因可能是多个处理器同时从各自的缓存中读取变量i，分别进行加1操作，然后分别写入系统内存中。那么，想要保证读改写共享</p>
@@ -1360,7 +1360,7 @@ public void set(V newReference,int newStamp);
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/16.jpg" class="responsive-img" alt="MoiaControl">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/16.jpg" class="responsive-img" alt="MoiaControl">
                         
                         <span class="card-title">MoiaControl</span>
                     </div>
@@ -1409,7 +1409,7 @@ public void set(V newReference,int newStamp);
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg" class="responsive-img" alt="并发编程的艺术_1">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg" class="responsive-img" alt="并发编程的艺术_1">
                         
                         <span class="card-title">并发编程的艺术_1</span>
                     </div>

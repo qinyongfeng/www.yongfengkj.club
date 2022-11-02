@@ -25,7 +25,7 @@ tar xvf MoiaControl.V5.06.001_Lin">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="baidu-site-verification" content="wvlc3L96QK" />
     <title>MoiaControl | RRYF</title>
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png">
+    <link rel="icon" type="image/png" href="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css">
@@ -89,7 +89,7 @@ tar xvf MoiaControl.V5.06.001_Lin">
             <div class="brand-logo">
                 <a href="/" class="waves-effect waves-light">
                     
-                    <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
+                    <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
                     
                     <span class="logo-span">RRYF</span>
                 </a>
@@ -327,7 +327,7 @@ tar xvf MoiaControl.V5.06.001_Lin">
 
     <div class="mobile-head bg-color">
         
-        <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
+        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
         
         <div class="logo-name">RRYF</div>
         <div class="logo-desc">
@@ -640,7 +640,7 @@ tar xvf MoiaControl.V5.06.001_Lin">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/16.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/16.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -854,9 +854,9 @@ ZOOKEEPER_SERVER=168.16.5.50:2181,168.16.5.51:2128
 <p>装选择 2，并填写以下项。该方式安装完成后，仍需要完善zookeeper集群。</p>
 </blockquote>
 <p>配置好install.srv文件后，执行sh install.sh -srv显示配置内容：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210422102642.png" alt="执行后展示内容"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210422102642.png" alt="执行后展示内容"></p>
 <p>确认端口等信息无误后输入回车进行安装</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210422102857.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210422102857.png"></p>
 <p>这里选择N新安装MoiaControl调度平台，并回车确认你的选择，开始安装新的调度平台。</p>
 <h5 id="2-1、调度分布式安装"><a href="#2-1、调度分布式安装" class="headerlink" title="2.1、调度分布式安装"></a>2.1、调度分布式安装</h5><h5 id="2-2、zookeeper集群安装"><a href="#2-2、zookeeper集群安装" class="headerlink" title="2.2、zookeeper集群安装"></a>2.2、zookeeper集群安装</h5><p>安装第一个调度节点时，若未使用zookeeper，或者新安装zookeeper，在安</p>
 <p>装分布式多调度节点时，必须完善zookeeper集群。</p>
@@ -930,7 +930,7 @@ sh install.sh -agt
 <blockquote>
 <p>注意不可以重复执行</p>
 </blockquote>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210422105331.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210422105331.png"></p>
 <p>确认无误后输入回车进行安装。</p>
 <h5 id="1-3、启动调度节点"><a href="#1-3、启动调度节点" class="headerlink" title="1.3、启动调度节点"></a>1.3、启动调度节点</h5><pre><code># 将env/moia.env作为用户环境变量并激活，才可以执行相关命令。
  source ./setenv
@@ -939,13 +939,13 @@ sh startup.sh
 # 停止服务
 sh shutdown.sh
 </code></pre>
-<p>调度节点执行 <code>MSrvAdm -l</code> 进程查看安装是否正常<br><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210422105627.png"><br>执行节点执行 <code>lsmt</code> 进程查看安装是否正常</p>
+<p>调度节点执行 <code>MSrvAdm -l</code> 进程查看安装是否正常<br><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210422105627.png"><br>执行节点执行 <code>lsmt</code> 进程查看安装是否正常</p>
 <h3 id="FileScan-安装、问题排查"><a href="#FileScan-安装、问题排查" class="headerlink" title="FileScan 安装、问题排查"></a>FileScan 安装、问题排查</h3><h5 id="1-1、FileScan安装步骤。"><a href="#1-1、FileScan安装步骤。" class="headerlink" title="1.1、FileScan安装步骤。"></a>1.1、FileScan安装步骤。</h5><p>通过FTP上传文件到安装目录下，解压执行以下命令。</p>
 <pre><code class="Linux">tar -zxvf 程序包
 </code></pre>
 <h5 id="1-2、在解压目录下，修改FileScan的配置文件"><a href="#1-2、在解压目录下，修改FileScan的配置文件" class="headerlink" title="1.2、在解压目录下，修改FileScan的配置文件"></a>1.2、在解压目录下，修改FileScan的配置文件</h5><pre><code class="Linux">vim etc/MOIA_EXT.xml
 </code></pre>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210422090929.png" alt="MOIA_EXT.xml"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210422090929.png" alt="MOIA_EXT.xml"></p>
 <blockquote>
 <p>配置项说明</p>
 </blockquote>
@@ -1365,7 +1365,7 @@ sh bin/shutdown.sh
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/08.jpg" class="responsive-img" alt="并发编程的艺术_3">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/08.jpg" class="responsive-img" alt="并发编程的艺术_3">
                         
                         <span class="card-title">并发编程的艺术_3</span>
                     </div>
@@ -1418,7 +1418,7 @@ sh bin/shutdown.sh
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/07.jpg" class="responsive-img" alt="并发编程的艺术_2">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/07.jpg" class="responsive-img" alt="并发编程的艺术_2">
                         
                         <span class="card-title">并发编程的艺术_2</span>
                     </div>

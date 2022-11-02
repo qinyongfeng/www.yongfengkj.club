@@ -20,7 +20,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="baidu-site-verification" content="wvlc3L96QK" />
     <title>并发编程的艺术_1 | RRYF</title>
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png">
+    <link rel="icon" type="image/png" href="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css">
@@ -84,7 +84,7 @@
             <div class="brand-logo">
                 <a href="/" class="waves-effect waves-light">
                     
-                    <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
+                    <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img" alt="LOGO">
                     
                     <span class="logo-span">RRYF</span>
                 </a>
@@ -322,7 +322,7 @@
 
     <div class="mobile-head bg-color">
         
-        <img src="https://cdn.jsdelivr.net/gh/rryf/images/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
+        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/logo/RRYF_logo_t.png" class="logo-img circle responsive-img">
         
         <div class="logo-name">RRYF</div>
         <div class="logo-desc">
@@ -635,7 +635,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/04.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -814,7 +814,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h3 id="并发编程的艺术-1"><a href="#并发编程的艺术-1" class="headerlink" title="并发编程的艺术_1"></a>并发编程的艺术_1</h3><h4 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h4><p>并发编程的目的是为了让程序运行得更快，但是，<code>并不是启动更多的线程就能让程序最大限度地并发执行</code>。在进行并发编程时，如果希望通过多线程执行任务让程序运行得更快，会面临非常多的挑战，比如上下文切换的问题、死锁的问题，以及受限于硬件和软件的资源限制问题，本章会介绍几种并发编程的挑战以及解决方案。</p>
-<h5 id="1-1上下文切换"><a href="#1-1上下文切换" class="headerlink" title="1.1上下文切换"></a>1.1上下文切换</h5><p>即使是单核处理器也支持多线程执行代码，<code>CPU通过给每个线程分配CPU时间片来实现这个机制。时间片是CPU分配给各个线程的时间，因为时间片非常短，所以CPU通过不停地切换线程执行，让我们感觉多个线程是同时执行的</code>，时间片一般是几十毫秒（ms）。<br>CPU通过时间片分配算法来循环执行任务，当前任务执行一个时间片后会切换到下一个任务。但是，在切换前会保存上一个任务的状态，以便下次切换回这个任务时，可以再加载这个任务的状态。所以任务从保存到再加载的过程就是一次上下文切换。<br><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420104053.jpg" alt="image"><br><code>创建状态</code>：进程在创建时需要申请一个空白PCB，向其中填写控制和管理进程的信息，完成资源分配。如果创建工作无法完成，比如资源无法满足，就无法被调度运行，把此时进程所处状态称为创建状态<br><code>就绪状态</code>：进程已经准备好，已分配到所需资源，只要分配到CPU就能够立即运行<br><code>执行状态</code>：进程处于就绪状态被调度后，进程进入执行状态<br><code>阻塞状态</code>：正在执行的进程由于某些事件（I&#x2F;O请求，申请缓存区失败）而暂时无法运行，进程受到<br><code>终止状态</code>：进程结束，或出现错误，或被系统终止，进入终止状态。无法再执行</p>
+<h5 id="1-1上下文切换"><a href="#1-1上下文切换" class="headerlink" title="1.1上下文切换"></a>1.1上下文切换</h5><p>即使是单核处理器也支持多线程执行代码，<code>CPU通过给每个线程分配CPU时间片来实现这个机制。时间片是CPU分配给各个线程的时间，因为时间片非常短，所以CPU通过不停地切换线程执行，让我们感觉多个线程是同时执行的</code>，时间片一般是几十毫秒（ms）。<br>CPU通过时间片分配算法来循环执行任务，当前任务执行一个时间片后会切换到下一个任务。但是，在切换前会保存上一个任务的状态，以便下次切换回这个任务时，可以再加载这个任务的状态。所以任务从保存到再加载的过程就是一次上下文切换。<br><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420104053.jpg" alt="image"><br><code>创建状态</code>：进程在创建时需要申请一个空白PCB，向其中填写控制和管理进程的信息，完成资源分配。如果创建工作无法完成，比如资源无法满足，就无法被调度运行，把此时进程所处状态称为创建状态<br><code>就绪状态</code>：进程已经准备好，已分配到所需资源，只要分配到CPU就能够立即运行<br><code>执行状态</code>：进程处于就绪状态被调度后，进程进入执行状态<br><code>阻塞状态</code>：正在执行的进程由于某些事件（I&#x2F;O请求，申请缓存区失败）而暂时无法运行，进程受到<br><code>终止状态</code>：进程结束，或出现错误，或被系统终止，进入终止状态。无法再执行</p>
 <p><code>举例：</code>这就像我们同时读两本书，当我们在读一本英文的技术书时，发现某个单词不认识，于是便打开中英文字典，但是在放下英文技术书之前，大脑必须先记住这本书读到了多少页的第多少行，等查完单词之后，能够继续读这本书。这样的切换是会影响读书效率的，同样上下文切换也会影响多线程的执行速度。</p>
 <h5 id="1-1-1-多线程一定快吗"><a href="#1-1-1-多线程一定快吗" class="headerlink" title="1.1.1 多线程一定快吗"></a>1.1.1 多线程一定快吗</h5><p>下面的代码演示串行和并发执行并累加操作的时间，请分析：下面的代码并发执行一定比串行执行快吗？</p>
 <pre><code class="JAVA">package dome;
@@ -865,7 +865,7 @@ public class ConcurrencyTest &#123;
 serial:0ms,b=-10000,a=50000
 </code></pre>
 <p>上述问题的答案是“不一定”，测试结果如表1-1所示。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420105230.jpg" alt="image"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420105230.jpg" alt="image"></p>
 <p><code>总结</code>：</p>
 <p>​		当并发执行累加操作不超过百万次时，速度会比串行执行累加操作要慢。那么，为什么并发执行的速度会比串行慢呢？这是因为线程<code>有创建和上下文切换的开销</code>。</p>
 <h5 id="1-1-2-测试上下文切换次数和时长"><a href="#1-1-2-测试上下文切换次数和时长" class="headerlink" title="1.1.2 测试上下文切换次数和时长"></a>1.1.2 测试上下文切换次数和时长</h5><p>可以度量上下文切换带来的消耗的工具：</p>
@@ -874,7 +874,7 @@ serial:0ms,b=-10000,a=50000
 <li>使用vmstat可以测量上下文切换的次数</li>
 </ul>
 <p>vmstat测量上下文切换次数的示例</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420105717.jpg"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420105717.jpg"></p>
 <p><code>CS（Content Switch）</code>表示上下文切换的次数，从上面的测试结果中我们可以看到，上下文每1秒切换1000多次。</p>
 <h5 id="1-1-3-如何减少上下文切换"><a href="#1-1-3-如何减少上下文切换" class="headerlink" title="1.1.3 如何减少上下文切换"></a>1.1.3 如何减少上下文切换</h5><p>减少上下文切换的方法有无锁并发编程、CAS算法、使用最少线程和使用协程。</p>
 <ul>
@@ -965,10 +965,10 @@ public class DeadLockDemo &#123;
 &#125;
 </code></pre>
 <p>结果：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420112009.jpg"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420112009.jpg"></p>
 <p>这段代码只是演示死锁的场景，在现实中你可能不会写出这样的代码。但是，在一些更为复杂的场景中，你可能会遇到这样的问题，比如t1拿到锁之后，因为一些异常情况没有释放锁（死循环）。又或者是t1拿到一个数据库锁，释放锁的时候抛出了异常，没释放掉。一旦出现死锁，业务是可感知的，因为不能继续提供服务了，那么只能通过dump线程查看到底是哪个线程出现了问题，以下线程信息告诉我们是DeadLockDemo类的第42行和第31行引起的死锁。</p>
 <p>一旦出现死锁，业务是可感知的，因为不能继续提供服务了，那么只能通过dump线程查看到底是哪个线程出现了问题，以下线程信息告诉我们是DeadLockDemo类的第42行和第31行引起的死锁。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rryf/images/posts/20210420112214.png"></p>
+<p><img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/posts/20210420112214.png"></p>
 <p>现在我们介绍避免死锁的几个常见方法。</p>
 <ul>
 <li>避免一个线程同时获取多个锁。</li>
@@ -1371,7 +1371,7 @@ public class DeadLockDemo &#123;
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/07.jpg" class="responsive-img" alt="并发编程的艺术_2">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/07.jpg" class="responsive-img" alt="并发编程的艺术_2">
                         
                         <span class="card-title">并发编程的艺术_2</span>
                     </div>
@@ -1424,7 +1424,7 @@ public class DeadLockDemo &#123;
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/rryf/images/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/11.jpg" class="responsive-img" alt="Hexo之渲染绕过">
+                        <img src="https://rryf-images-1257415710.cos.ap-beijing.myqcloud.com/galleries/%E5%8A%A8%E6%BC%AB%E9%A3%8E%E6%99%AF/11.jpg" class="responsive-img" alt="Hexo之渲染绕过">
                         
                         <span class="card-title">Hexo之渲染绕过</span>
                     </div>
